@@ -1,0 +1,106 @@
+<odoo>
+  <data>
+      <record id="purcharse_order_user_custom_form" model="ir.ui.view">
+          <field name="name">view.purcharse.order.user.custom.form</field>
+          <field name="model">purchase.order</field>
+          <field name="inherit_id" ref="purchase.purchase_order_form"/>
+          <field name="arch" type="xml">
+            <xpath expr='//header' position="replace">
+              <header attrs="{'invisible': [('is_acquisition', '=', True)]}">
+                  <button name="action_approve_limit" string="Aprobar limite" states="limit_approval" class="oe_highlight" type="object" groups="purchase.group_purchase_manager"/>
+                  <field name="state" widget="statusbar" statusbar_visible="draft,limit_approval,sent,purchase," readonly="1"/>
+              </header>
+          </xpath>
+              <xpath expr="//field[@name='partner_id']" position="attributes">
+                  <attribute name="attrs">{'invisible': [('show_partner_id', '=', False), ('see_supplier', '=', False)]}</attribute>
+              </xpath>
+            <xpath expr="//field[@name='partner_id']" position="before">
+                <field name="show_partner_id" invisible="1"/>
+                <field name="limit_config_id" string="Configuración de Límite" groups="purchase.group_purchase_manager" readonly="1"/>
+                <field name="current_limit" widget="monetary" string="Límite Actual"/>
+            </xpath>
+            <xpath expr="//field[@name='account_analytic_id']" position="attributes">
+              <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
+              <attribute name="context">{'create': False, 'edit': False}</attribute>
+              <attribute name="required">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='analytic_tag_ids']" position="attributes">
+              <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
+              <attribute name="context">{'create': False, 'edit': False}</attribute>
+              <attribute name="required">True</attribute>
+            </xpath>
+            <xpath expr="//field[@name='product_uom']" position="attributes">
+              <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
+              <attribute name="context">{'create': False, 'edit': False}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='account_analytic_id']" position="before">
+              <field name="product_type" string="Tipo de producto" groups="purchase.group_purchase_manager" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='currency_id']" position="after">
+              <field name="is_foreign" string="¿Es compra extranjera?"/>
+            </xpath>
+          </field>
+        </record>
+
+        <record id="view_purchase_order_limit_config_form" model="ir.ui.view">
+        <field name="name">purchase.order.limit.config.form</field>
+        <field name="model">purchase.limit.config</field>
+        <field name="arch" type="xml">
+            <form string="Configuración del Límite de Compras">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name_config" class="oe_edit_only"/>
+                        <h1><field name="name_config" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="quantity_limit" string="Cantidad limite de compra"/>
+                            <field name="current_limit" string="Límite Actual de compra"/>
+                        </group>
+                        <group>
+                            <field name="create_date" readonly="1" string="Fecha de Creación"/>
+                            <field name="write_date" readonly="1" string="Última Modificación"/>
+                            <field name="write_uid" readonly="1" string="Modificado Por"/>
+                        </group>
+                    </group>
+                    <separator string="Nota"/>
+                    <group>
+                        <field name="note" widget="text" placeholder="Agrega aquí tu nota..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+      <record id="action_purchase_order_limit_config" model="ir.actions.act_window">
+        <field name="name">Configuracion del limite de compras</field>
+        <field name="res_model">purchase.limit.config</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_purchase_order_limit_config_form"/>
+        <field name="context">{'create': False}</field>
+    </record>
+
+    <menuitem
+    id="menu_purchase_order_limit_config"
+    name="Configuracion del limite de compras"
+    parent="purchase.menu_purchase_config"
+    sequence="5"
+    action="action_purchase_order_limit_config"/>
+
+    <record model="ir.ui.menu" id="purchase.menu_purchase_form_action">
+      <field name="groups_id" eval="[(6,0,[ref('purchase.group_purchase_manager')])]"/>
+    </record>
+    <record model="ir.ui.menu" id="l10n_cl_fe.menu_upload_xml">
+      <field name="groups_id" eval="[(6,0,[ref('purchase.group_purchase_manager')])]"/>
+    </record>
+    <record model="ir.ui.menu" id="purchase.menu_procurement_management_supplier_name">
+      <field name="groups_id" eval="[(6,0,[ref('purchase.group_purchase_manager')])]"/>
+    </record>
+    <record model="ir.ui.menu" id="purchase.menu_purchase_products">
+      <field name="groups_id" eval="[(6,0,[ref('purchase.group_purchase_manager')])]"/>
+    </record>
+    <record model="ir.ui.menu" id="purchase_requisition.menu_purchase_requisition_pro_mgt">
+      <field name="groups_id" eval="[(6,0,[ref('purchase.group_purchase_manager')])]"/>
+    </record>
+  </data>
+</odoo>
